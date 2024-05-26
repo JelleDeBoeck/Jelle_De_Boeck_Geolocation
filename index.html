@@ -11,6 +11,16 @@
 
 <div id="map"></div>
 
+<div id="quiz-popup" class="quiz-popup">
+  <div class="quiz-content">
+    <span class="close" onclick="closeQuizPopup()">&times;</span>
+    <h2 id="quiz-question"></h2>
+    <input type="text" id="quiz-answer" placeholder="Type je antwoord hier">
+    <button onclick="checkQuizAnswer()">Check Antwoord</button>
+    <p id="quiz-response"></p>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>
 </body>

@@ -1,7 +1,7 @@
 var map = L.map('map').setView([50.8503, 4.3517], 5);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> bijdragers'
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
 var locations = [
@@ -15,47 +15,52 @@ var locations = [
 var quizData = [
   { location: 'België', question: "Wat is de hoofdstad van België?", answer: "Brussel" },
   { location: 'Frankrijk', question: "Wat is de grootste stad in Frankrijk?", answer: "Parijs" },
-  { location: 'Duitsland', question: "Welke rivier stroomt door Berlijn?", answer: "Spree" },
-  { location: 'Italië', question: "Welke beroemde toren staat in Pisa?", answer: "Toren van Pisa" },
-  { location: 'Nederland', question: "Welke stad staat bekend om zijn grachten?", answer: "Amsterdam" }
+  { location: 'Duitsland', question: "In welke maand vindt het Oktoberfest plaats?", answer: "september" },
+  { location: 'Italië', question: "Hoe heet de beroemde schilder van de Mona Lisa?", answer: "Leonardo da Vinci" },
+  { location: 'Nederland', question: "Welke artiest ging dit jaar voor Nederland naar het Eurovisie Songfestival?", answer: "Joost Klein" }
 ];
 
 locations.forEach(function(location) {
   var marker = L.marker(location.coordinates).addTo(map).bindPopup(location.name);
   marker.on('click', function(e) {
-    handleQuiz(location.name);
+    openQuizPopup(location.name);
   });
 });
 
-function onLocationFound(e) {
-  var radius = e.accuracy / 2;
-  L.marker(e.latlng).addTo(map).bindPopup("Je bent hier").openPopup();
-  L.circle(e.latlng, radius).addTo(map);
-}
-
-function onLocationError(e) {
-  alert(e.message);
-}
-
-map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);
-
-map.locate({ setView: true, maxZoom: 16 });
-
-function handleQuiz(locationName) {
+function openQuizPopup(locationName) {
   var quizItem = quizData.find(item => item.location === locationName);
   if (!quizItem) return;
 
-  var answer = prompt(quizItem.question);
-  if (answer !== null) {
-    var correctAnswer = quizItem.answer.toLowerCase().trim();
-    var givenAnswer = answer.toLowerCase().trim();
-    var isCorrect = correctAnswer === givenAnswer;
+  var quizPopup = document.getElementById('quiz-popup');
+  quizPopup.style.display = 'block';
 
-    if (isCorrect) {
-      alert("Correct!");
-    } else {
-      alert("Onjuist. Het juiste antwoord is: " + quizItem.answer);
-    }
+  var quizQuestion = document.getElementById('quiz-question');
+  quizQuestion.textContent = quizItem.question;
+
+  var quizResponse = document.getElementById('quiz-response');
+  quizResponse.textContent = '';
+
+  var quizAnswerInput = document.getElementById('quiz-answer');
+  quizAnswerInput.value = '';
+}
+
+function closeQuizPopup() {
+  var quizPopup = document.getElementById('quiz-popup');
+  quizPopup.style.display = 'none';
+}
+
+function checkQuizAnswer() {
+  var quizAnswer = document.getElementById('quiz-answer').value.toLowerCase().trim();
+  var quizQuestion = document.getElementById('quiz-question').textContent;
+  var quizItem = quizData.find(item => item.question === quizQuestion);
+  if (!quizItem) return;
+
+  var correctAnswer = quizItem.answer.toLowerCase().trim();
+  var quizResponse = document.getElementById('quiz-response');
+
+  if (quizAnswer === correctAnswer) {
+    quizResponse.textContent = 'Correct!';
+  } else {
+    quizResponse.textContent = 'Onjuist. Het juiste antwoord is: ' + quizItem.answer;
   }
 }
